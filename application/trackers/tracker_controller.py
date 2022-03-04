@@ -1,10 +1,9 @@
-from flask import current_app as app, redirect, url_for
-from flask import render_template, request
+from flask import current_app as app, redirect, url_for, render_template, request
 from flask_login import login_required, current_user
 from .models import Tracker, Logs
-from .tracker_trend import create_graph
+from .utils import create_graph
 from app import db
-from os import remove
+from datetime import datetime, date, timedelta
 
 @login_required
 @app.route("/index", methods = ["GET", "POST"])
@@ -19,18 +18,12 @@ def index():
             else:
                 recent_timestamp = "NA"
             tracker_list.append({"id": tracker.id, "name": tracker.name, "timestamp": recent_timestamp})
-        print(tracker_list)
         return render_template("index.html", name=current_user.name, trackers=tracker_list)
 
 
 @login_required
 @app.route("/tracker/<int:tracker_id>", methods = ["GET", "POST"])
 def tracker(tracker_id):
-    # try:
-    #     remove("../../static/graph.png")
-    # except:
-    #     pass
-    
     if request.method == "GET":
         logs = Logs.query.filter_by(tracker=tracker_id).all() 
         tracker = Tracker.query.filter_by(id=tracker_id).first()
@@ -40,19 +33,37 @@ def tracker(tracker_id):
             value.append(log.value)
             timestamp.append(log.timestamp)
         create_graph(value, timestamp)
+
         return render_template("tracker-detail.html", logs=logs, name=current_user.name, tracker=tracker)
 
     elif request.method == "POST":
+        period = request.form["period"]
+        print(period)
         logs = Logs.query.filter_by(tracker=tracker_id).all() 
         tracker = Tracker.query.filter_by(id=tracker_id).first()
-        period = request.form["period"]
         value = []
         timestamp = []
+        today = date.today()
         for log in logs:
-            value.append(log.value)
-            timestamp.append(log.timestamp)
+            date_str = log.timestamp[:10]
+            date_time_obj = datetime.strptime(date_str, '%Y-%m-%d')
+            
+            if period == "0":
+                value.append(log.value)
+                timestamp.append(log.timestamp)
+
+            elif period =="1":
+                if date_time_obj.date() == today:
+                    value.append(log.value)
+                    timestamp.append(log.timestamp)
+
+            else:
+                if date_time_obj.date() >= today - timedelta(days=int(period)):
+                    value.append(log.value)
+                    timestamp.append(log.timestamp)
+
         create_graph(value, timestamp)
-        return render_template("tracker-detail.html", logs=logs, name=current_user.name, tracker=tracker)
+        return render_template("tracker-detail.html", logs=logs, name=current_user.name, tracker=tracker, period = period)
 
 
 @login_required

@@ -3,12 +3,15 @@
 {% block content %}
 <h3>{{ tracker.name }} - Tracker</h3>
 <div>
-    <img src="{{url_for('static', filename='graph.png')}}" width="500" height="500" />
-    <select name="period" id="period">
-        <option value="1" {"selected" if period==1}>Today</option>
-        <option value="7" {"selected" if period==7}>This week</option>
-        <option value="30" {"selected" if period==30}>This month</option>
-    </select> 
+    <img src="{{url_for('static', filename='graph.png')}}" width="1000" height="500" />
+    <form method="post" id="time-period">
+        <select name="period" id="period" onchange="submitDetails('time-period')">
+            <option value="0" {"selected" if period=="0"}>All time</option>
+            <option value="1" {"selected" if period=="1"}>Today</option>
+            <option value="7" {"selected" if period=="7"}>This week</option>
+            <option value="30" {"selected" if period=="30"}>This month</option>
+        </select>
+    </form> 
 </div>
 <br>
 <h3>Logs</h3>
@@ -42,4 +45,9 @@
         {% endfor %}
     </tbody>
 </table>
+<script>
+    function submitDetails(formID) {
+        document.getElementById(formID).submit();
+    }
+</script>
 {% endblock %}
