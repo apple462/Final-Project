@@ -1,0 +1,38 @@
+{% extends "template.html" %}
+
+{% block content %}
+<form method="post" id="tracker-log-edit">
+    <div>
+        <label for="when">When</label>
+        <input type="datetime-local" name="when" id="when" value="{{ log.timestamp }}" required />
+    </div>
+    <div>
+        <label for="value">Value</label>
+        {% if tracker_type == "Numerical" or tracker_type == "Time Duration" %}
+        <input type="number" name="value" id="value" value="{{ log.value }}" required />
+        {% endif %}
+        {% if tracker_type == "Boolean" %}
+        <select name="value" id="value" required>
+            <option value="" disabled>Select value</option>
+            <option value="true" {"selected" if log.value == "true"}>True</option>
+            <option value="false" {"selected" if log.value == "false"}>False</option>
+        </select>
+        {% endif %}
+        {% if choices %}
+        <select name="value" id="value" required>
+            <option value="" disabled>Select value</option>
+            {% for choice in choices %}
+            <option value="{{ choice }}" {"selected" if log.value == choice}>{{ choice }}</option>
+            {% endfor %}
+        </select>   
+        {% endif %}
+    </div>
+    <div>
+        <label for="note">Note</label>
+        <textarea form="tracker-log-edit" name="note" id="note" required>{{ log.note }}</textarea>
+    </div>
+    <div>
+        <button type="submit">Log it</button>
+    </div>
+</form>
+{% endblock %}

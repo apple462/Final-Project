@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quantified Self</title>
+</head>
+<body>
+    <h2>Quantified Self</h2>
+    <p>Track and measure yourself!</p>
+
+    <form action="/login" method="post" id="login-form">
+        <h4>Login</h4>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="notification is-danger">
+          {{ messages[0] }}
+        </div>
+        {% endif %}
+      {% endwith %}
+        <div>
+            <label for="username">Username</label><br>
+            <input type="text" name="username" id="username" />
+        </div>
+        <div>
+            <label for="password">Password</label><br>
+            <input type="password" name="password" id="password" />
+        </div>
+        <div>
+            <button type="submit">Login</button>
+        </div>
+    </form>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{% extends "template.html" %}
+
+{% block content %}
+<form action="/tracker-add" method="post" id="tracker-add">
+    <div>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required />
+    </div>
+    <div>
+        <label for="desc">Description</label>
+        <textarea form="tracker-add" id="desc" name="desc" required></textarea>
+    </div>
+    <div>
+        <label for="type">Tracker type</label>
+        <select name="type" id="type" required>
+            <option value="" disabled>Select type</option>
+            <option value="Numerical">Numerical</option>
+            <option value="Multiple Choice">Multiple Choice</option>
+            <option value="Time Duration">Time Duration</option>
+            <option value="Boolean">Boolean</option>
+        </select>
+    </div>
+    <div>
+        <label for="settings">Settings</label>
+        <input type="text" id="settings" name="settings" />
+    </div>
+    <div>
+        <button type="submit">Add tracker</button>
+    </div>
+</form>
+{% endblock %}

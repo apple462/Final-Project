@@ -1,0 +1,31 @@
+{% extends "template.html" %}
+
+{% block content %}
+<form method="post" id="tracker-edit">
+    <div>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" value="{{tracker_name}}" required />
+    </div>
+    <div>
+        <label for="desc">Description</label>
+        <textarea form="tracker-edit" id="desc" name="desc" required>{{desc}}</textarea>
+    </div>
+    <div>
+        <label for="type">Tracker type</label>
+        <select name="type" id="type" required>
+            <option value="" disabled>Select type</option>
+            <option value="Numerical" {"selected" if type=="Numerical"}>Numerical</option>
+            <option value="Multiple Choice" {"selected" if type=="Multiple Choice"}>Multiple Choice</option>
+            <option value="Time Duration" {"selected" if type=="Time Duration"}>Time Duration</option>
+            <option value="Boolean" {"selected" if type=="Boolean"}>Boolean</option>
+        </select>
+    </div>
+    <div>
+        <label for="settings">Settings</label>
+        <input type="text" id="settings" name="settings" value="{{settings}}" />
+    </div>
+    <div>
+        <button type="submit">Save changes</button>
+    </div>
+</form>
+{% endblock %}

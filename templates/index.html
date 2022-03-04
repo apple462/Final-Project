@@ -1,0 +1,41 @@
+{% extends "template.html" %}
+
+{% block content %}
+{% if trackers %}
+<table id="tracker-table" border="1px">
+    <thead>
+        <tr>
+            <td>Tracker</td>
+            <td>Last tracked</td>
+            <td>Log</td>
+            <td>Actions</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for tracker in trackers %}
+        <tr>
+            <td><a href="/tracker/{{ tracker.id }}">{{ tracker.name }}</a></td>
+            <td>{{ tracker.timestamp }}</td>
+            <td><a href="/tracker/{{ tracker.id }}/log">Add</a></td>
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Select action
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item" href='/tracker/{{ tracker.id }}/edit'>Edit</a>
+                      <a class="dropdown-item" href='/tracker/{{ tracker.id }}/delete'>Delete</a>
+                    </div>
+                  </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No trackers found.</p>
+{% endif %}
+
+<button onclick="location.href='/tracker-add'">Add new tracker</button>
+
+{% endblock %}
