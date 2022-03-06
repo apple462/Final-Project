@@ -14,10 +14,10 @@
         <label for="type">Tracker type</label>
         <select name="type" id="type" required>
             <option value="" disabled>Select type</option>
-            <option value="Numerical" {"selected" if type=="Numerical"}>Numerical</option>
-            <option value="Multiple Choice" {"selected" if type=="Multiple Choice"}>Multiple Choice</option>
-            <option value="Time Duration" {"selected" if type=="Time Duration"}>Time Duration</option>
-            <option value="Boolean" {"selected" if type=="Boolean"}>Boolean</option>
+            <option value="Numerical" {{"selected" if tracker_type=="Numerical"}}>Numerical</option>
+            <option value="Multiple Choice" {{"selected" if tracker_type=="Multiple Choice"}}>Multiple Choice</option>
+            <option value="Time Duration" {{"selected" if tracker_type=="Time Duration"}}>Time Duration</option>
+            <option value="Boolean" {{"selected" if tracker_type=="Boolean"}}>Boolean</option>
         </select>
     </div>
     <div>

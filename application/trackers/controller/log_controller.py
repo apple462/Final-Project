@@ -1,7 +1,7 @@
 from flask import current_app as app, redirect, url_for
 from flask import render_template, request
 from flask_login import login_required, current_user
-from .models import Tracker, Logs
+from application.trackers.model.models import Tracker, Logs
 from app import db
 
 
@@ -32,7 +32,6 @@ def tracker_log(tracker_id):
         return redirect(url_for("index"))
 
 
-
 @login_required
 @app.route("/tracker/<tracker_id>/log/<log_id>/edit", methods = ["GET", "POST"])
 def tracker_log_edit(tracker_id, log_id):
@@ -57,7 +56,6 @@ def tracker_log_edit(tracker_id, log_id):
             db.session.rollback()
             print("Rolling back")
         return redirect(f"/tracker/{tracker_id}")
-
 
 
 @login_required

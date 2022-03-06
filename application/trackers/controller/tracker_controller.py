@@ -1,7 +1,7 @@
 from flask import current_app as app, redirect, url_for, render_template, request
 from flask_login import login_required, current_user
-from .models import Tracker, Logs
-from .utils import create_graph
+from application.trackers.model.models import Tracker, Logs
+from application.trackers.utils import create_graph
 from app import db
 from datetime import datetime, date, timedelta
 

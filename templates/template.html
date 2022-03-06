@@ -18,11 +18,11 @@
 </head>
 
 <body>
-    <div>
+    <h2>
         Hello, {{ name }}!
-    </div>
+    </h2>
     <div style="float: right;">
-        <button onclick="location.href='/logout'">Logout</button>
+        <button class="btn" onclick="location.href='/logout'">Logout</button>
     </div>
     {% block content %} {% endblock %}
 </body>

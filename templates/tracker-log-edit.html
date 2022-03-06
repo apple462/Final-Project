@@ -11,18 +11,20 @@
         {% if tracker_type == "Numerical" or tracker_type == "Time Duration" %}
         <input type="number" name="value" id="value" value="{{ log.value }}" required />
         {% endif %}
+
         {% if tracker_type == "Boolean" %}
         <select name="value" id="value" required>
             <option value="" disabled>Select value</option>
-            <option value="true" {"selected" if log.value == "true"}>True</option>
-            <option value="false" {"selected" if log.value == "false"}>False</option>
+            <option value="true" {{"selected" if log.value == "true"}}>True</option>
+            <option value="false" {{"selected" if log.value == "false"}}>False</option>
         </select>
         {% endif %}
+
         {% if choices %}
         <select name="value" id="value" required>
             <option value="" disabled>Select value</option>
             {% for choice in choices %}
-            <option value="{{ choice }}" {"selected" if log.value == choice}>{{ choice }}</option>
+            <option value="{{ choice }}" {{"selected" if log.value == choice}}>{{ choice }}</option>
             {% endfor %}
         </select>   
         {% endif %}
