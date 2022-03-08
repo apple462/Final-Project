@@ -35,7 +35,7 @@ class LogAPI(Resource):
             return logs
 
     @marshal_with(Log_output)
-    def push(self, tracker_id):
+    def post(self, tracker_id):
         tracker = Tracker.query.filter_by(id=tracker_id).first()
         if tracker == None:
             return {"error": "Tracker not found"}, 404

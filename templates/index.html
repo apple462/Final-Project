@@ -2,7 +2,8 @@
 
 {% block content %}
 {% if trackers %}
-<table id="tracker-table" border="1px">
+<h4>Here's your list of trackers</h4><br>
+<table class="table" id="tracker-table" border="1px">
     <thead>
         <tr>
             <td>Tracker</td>
@@ -36,6 +37,6 @@
 <p>No trackers found.</p>
 {% endif %}
 
-<button onclick="location.href='/tracker-add'">Add new tracker</button>
+<button class="btn btn-outline-primary" onclick="location.href='/tracker-add'">Add new tracker</button>
 
 {% endblock %}

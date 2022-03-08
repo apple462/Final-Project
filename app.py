@@ -40,7 +40,7 @@ from application.trackers.view.log_view import *
 # API 
 api.add_resource(TrackerAPI, "/api/tracker", "/api/tracker/<int:tracker_id>")
 api.add_resource(LogAPI, "/api/tracker/<int:tracker_id>/log", "/api/tracker/<int:tracker_id>/log/<int:log_id>")
-api.add_resource(LogPeriodAPI, "/api/tracker/<int:tracker_id>/logs/<int:period>")
+api.add_resource(LogPeriodAPI, "/api/tracker/<int:tracker_id>/logs/<string:period>")
 
 
 if __name__ == "__main__":
