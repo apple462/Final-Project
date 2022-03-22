@@ -3,18 +3,21 @@ from flask import render_template, request
 from flask_login import login_required, current_user
 from application.trackers.model.models import Tracker, Logs
 from app import db
+import datetime
 
 
 @login_required
 @app.route("/tracker/<tracker_id>/log", methods = ["GET", "POST"])
 def tracker_log(tracker_id):
     tracker = Tracker.query.filter_by(id=tracker_id).first()
-    
+    date_time = datetime.datetime.now()
+    local_timestamp = date_time.strftime("%Y-%m-%dT%H:%M")
+    print(local_timestamp)
     if request.method == "GET":
         if tracker.type == "Multiple Choice":
-            return render_template("tracker-log.html", name = current_user.name, choices = tracker.settings.split(","))
+            return render_template("tracker-log.html", name = current_user.name, choices = tracker.settings.split(","), local_timestamp = local_timestamp)
         else:
-            return render_template("tracker-log.html", name = current_user.name, tracker_type = tracker.type)
+            return render_template("tracker-log.html", name = current_user.name, tracker_type = tracker.type, local_timestamp = local_timestamp)
 
     elif request.method == "POST":
         when = request.form["when"]

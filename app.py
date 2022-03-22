@@ -10,8 +10,6 @@ db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__, template_folder="templates")
-    app.secret_key = "internaluseonly"
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///quantifiedself.sqlite3"
     if os.getenv("ENV", "development") == "production":
         raise Exception("Currently no production config is setup")
     else:
@@ -38,9 +36,9 @@ from application.trackers.view.log_view import *
 
 
 # API 
-api.add_resource(TrackerAPI, "/api/tracker", "/api/tracker/<int:tracker_id>")
-api.add_resource(LogAPI, "/api/tracker/<int:tracker_id>/log", "/api/tracker/<int:tracker_id>/log/<int:log_id>")
-api.add_resource(LogPeriodAPI, "/api/tracker/<int:tracker_id>/logs/<string:period>")
+api.add_resource(TrackerAPI, "/api/<int:user_id>/tracker", "/api/<int:user_id>/tracker/<int:tracker_id>")
+api.add_resource(LogAPI, "/api/<int:user_id>tracker/<int:tracker_id>/log", "/api/<int:user_id>/tracker/<int:tracker_id>/log/<int:log_id>")
+api.add_resource(LogPeriodAPI, "/api/<int:user_id>/tracker/<int:tracker_id>/logs/<string:period>")
 
 
 if __name__ == "__main__":

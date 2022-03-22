@@ -10,7 +10,7 @@ from datetime import datetime, date, timedelta
 def index():
     if request.method == "GET":
         tracker_list = []
-        trackers = Tracker.query.all()
+        trackers = Tracker.query.filter_by(user = current_user.id).all()
         for tracker in trackers:
             recent_log = Logs.query.filter_by(tracker=tracker.id).order_by(Logs.timestamp.desc()).first()
             if recent_log:
@@ -73,15 +73,15 @@ def tracker_add():
         return render_template("tracker-add.html", name = current_user.name)
 
     elif request.method == "POST":
-        name = request.form["name"]
+        name = request.form["name"].capitalize()
         desc = request.form["desc"]
         tracker_type = request.form["type"]
 
         if tracker_type == "Multiple Choice":
             settings = request.form["settings"]
-            tracker = Tracker(name=name, description=desc, type=tracker_type, settings=settings)
+            tracker = Tracker(name=name, description=desc, type=tracker_type, settings=settings, user=current_user.id)
         else:
-            tracker = Tracker(name=name, description=desc, type=tracker_type)
+            tracker = Tracker(name=name, description=desc, type=tracker_type, user=current_user.id)
         
         db.session.add(tracker)
         try:

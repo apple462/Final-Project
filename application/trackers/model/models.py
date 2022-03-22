@@ -7,6 +7,7 @@ class Tracker(db.Model):
     description = db.Column(db.String)
     type = db.Column(db.String)
     settings = db.Column(db.String)
+    user = db.Column(db.Integer, db.ForeignKey("profile.id", ondelete="CASCADE"), nullable = False)
     logs = db.relationship('Logs', backref='log', cascade="all, delete")
 
 

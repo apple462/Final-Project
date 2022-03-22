@@ -1,8 +1,10 @@
+from tkinter.messagebox import NO
 from flask import request
 from flask_restful import Resource, Api, fields, marshal_with
 from application.trackers.model.models import Logs, Tracker
 from app import db
 from datetime import datetime, timedelta, date
+from .error import *
 
 
 Log_output = {
@@ -15,10 +17,10 @@ Log_output = {
 
 class LogAPI(Resource):
     @marshal_with(Log_output)
-    def get(self, tracker_id, log_id=None):
-        tracker = Tracker.query.filter_by(id=tracker_id).first()
+    def get(self, tracker_id, user_id, log_id=None):
+        tracker = Tracker.query.filter_by(id=tracker_id, user=user_id).first()
         if tracker == None:
-            return {"error": "Tracker not found"}, 404
+            raise NotFoundError(item = 'Tracker/User')
 
         if log_id != None:
             log = Logs.query.filter_by(id=log_id, tracker = tracker_id).first()
@@ -26,7 +28,7 @@ class LogAPI(Resource):
                 log.tracker = tracker.name
                 return log
             else:
-                return {"error": "Log not found"}, 404
+                raise NotFoundError(item = 'Log')
 
         else:
             logs = Logs.query.filter_by(tracker = tracker_id).all()
@@ -34,25 +36,26 @@ class LogAPI(Resource):
                 log.tracker = tracker.name
             return logs
 
+
     @marshal_with(Log_output)
-    def post(self, tracker_id):
-        tracker = Tracker.query.filter_by(id=tracker_id).first()
+    def post(self, tracker_id, user_id):
+        tracker = Tracker.query.filter_by(id=tracker_id, user=user_id).first()
         if tracker == None:
-            return {"error": "Tracker not found"}, 404
+            raise NotFoundError(item = 'Tracker/User')
 
         log = request.get_json()
         print("POST", log)
         if not log:
-            return {"error": "No data in request"}, 400
+            raise BadRequestError(message='No data in request')
         else:
             if "value" not in log:
-                return {"error": "No value in request"}, 400
+                raise BadRequestError(message='No value in request')
 
             elif "note" not in log:
-                return {"error": "No note in request"}, 400
+                raise BadRequestError(message='No note in request')
 
             elif "timestamp" not in log:
-                return {"erorr": "No timestamp in request"}, 400
+                raise BadRequestError(message='No timestamp in request')
 
             else:
                 new_log = Logs(tracker=tracker_id, value=log["value"], note=log["note"], timestamp = log["timestamp"])
@@ -65,14 +68,15 @@ class LogAPI(Resource):
                     print("Rolling back")
                 return new_log, 201
 
-    def delete(self, tracker_id, log_id):
-        tracker = Tracker.query.filter_by(id=tracker_id).first()
+
+    def delete(self, tracker_id, log_id, user_id):
+        tracker = Tracker.query.filter_by(id=tracker_id, user=user_id).first()
         if tracker == None:
-            return {"error": "Tracker not found"}, 404
+            raise NotFoundError(item = 'Tracker/User')
 
         log = Logs.query.filter_by(id=log_id, tracker = tracker_id).first()
         if log == None:
-            return {"error": "Log not found"}, 404
+            raise NotFoundError(item = 'Log')
 
         db.session.delete(log)
         try:
@@ -83,15 +87,16 @@ class LogAPI(Resource):
             print("Rolling back")
         return log, 201
 
+
     @marshal_with(Log_output)
-    def put(self, tracker_id, log_id):
-        tracker = Tracker.query.filter_by(id=tracker_id).first()
+    def put(self, tracker_id, log_id, user_id):
+        tracker = Tracker.query.filter_by(id=tracker_id, user = user_id).first()
         if tracker == None:
-            return {"error": "Tracker not found"}, 404
+            raise NotFoundError(item = 'Tracker/User')
 
         log = Logs.query.filter_by(id=log_id, tracker = tracker_id).first()
         if log == None:
-            return {"error": "Log not found"}, 404
+            raise NotFoundError(item = 'Log')
 
         new_log = request.get_json()
         if "timestamp" in new_log:
@@ -111,10 +116,10 @@ class LogAPI(Resource):
 
 
 class LogPeriodAPI(Resource):
-    def get(self, tracker_id, period):
-        tracker = Tracker.query.filter_by(id=tracker_id).first()
+    def get(self, tracker_id, period, user_id):
+        tracker = Tracker.query.filter_by(id=tracker_id, user=user_id).first()
         if tracker == None:
-            return {"error": "Tracker not found"}, 404
+            raise NotFoundError(item = 'Tracker/User')
 
         logs = Logs.query.filter_by(tracker = tracker_id).all()
         value = []

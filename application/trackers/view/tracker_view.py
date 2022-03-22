@@ -2,6 +2,7 @@ from flask import request
 from flask_restful import Resource, Api, fields, marshal_with
 from application.trackers.model.models import Tracker
 from app import db
+from .error import *
 
 Tracker_output = {
     "id": fields.Integer,
@@ -13,42 +14,48 @@ Tracker_output = {
 
 class TrackerAPI(Resource):
     @marshal_with(Tracker_output)
-    def get(self, tracker_id=None):
+    def get(self, user_id, tracker_id=None):
+
         if tracker_id == None:
-            return Tracker.query.all()
+            trackers = Tracker.query.filter_by(user=user_id).all()
+            if trackers:
+                return trackers
+            else:
+                raise NotFoundError( item = 'Tracker/User')
         else:
-            tracker = Tracker.query.filter_by(id=tracker_id).first()
+            tracker = Tracker.query.filter_by(id=tracker_id, user = user_id).first()
             if tracker:
                 return tracker  
             else:
-                return {"error": "Tracker not found"}, 404
+                print("Tracker not found")
+                raise NotFoundError( item = 'Tracker/User')
     
     @marshal_with(Tracker_output)
-    def post(self):
+    def post(self, user_id):
         tracker = request.get_json()
         print("POST", tracker)
         if not tracker:
-            return {"error": "No data in request"}, 400
+            raise BadRequestError(message = 'No data in request')
         else:
             if "name" not in tracker:
-                return {"error": "No name in request"}, 400
+                raise BadRequestError(message = 'No name in request')
             
             if "description" not in tracker:
-                return {"error": "No description in request"}, 400
+                raise BadRequestError(message = 'No description in request')
             
             if "type" not in tracker:
-                return {"error": "No type in request"}, 400
+                raise BadRequestError(message = 'No type in request')
             elif tracker["type"] not in ["Numerical", "Multiple Choice", "Time Duration", "Boolean"]:
-                return {"error": "Invalid type in request"}, 400
+                raise BadRequestError(message = 'Invalid type in request')
             
             if tracker["type"] == "Mutliple Choice":
                 if "settings" not in tracker:
-                    return {"error": "No settings in request"}, 400
+                    raise BadRequestError(message = 'No settings in request')
 
             if "settings" not in tracker:
-                new_tracker = Tracker(name=tracker["name"], description=tracker["description"], type=tracker["type"])
+                new_tracker = Tracker(name=tracker["name"], description=tracker["description"], type=tracker["type"], user=user_id)
             else:
-                new_tracker = Tracker(name=tracker["name"], description=tracker["description"], type=tracker["type"], settings=tracker["settings"])
+                new_tracker = Tracker(name=tracker["name"], description=tracker["description"], type=tracker["type"], settings=tracker["settings"], user=user_id)
 
             db.session.add(new_tracker)
             try:
@@ -60,8 +67,8 @@ class TrackerAPI(Resource):
             return new_tracker, 201
 
 
-    def delete(self, tracker_id):
-        tracker = Tracker.query.filter_by(id=tracker_id).first()
+    def delete(self, tracker_id, user_id):
+        tracker = Tracker.query.filter_by(id=tracker_id, user=user_id).first()
         if tracker:
             db.session.delete(tracker)
             try:
@@ -71,12 +78,12 @@ class TrackerAPI(Resource):
                 db.session.rollback()
                 print("Rolling back")
         else:
-            return {"error": "Tracker not found"}, 404
+            raise NotFoundError( item = 'Tracker/User')
 
     
     @marshal_with(Tracker_output)
-    def put(self, tracker_id):
-        tracker = Tracker.query.filter_by(id=tracker_id).first()
+    def put(self, tracker_id, user_id):
+        tracker = Tracker.query.filter_by(id=tracker_id, user=user_id).first()
         if tracker:
             new_tracker = request.get_json()
             if "name" in new_tracker:
@@ -95,4 +102,4 @@ class TrackerAPI(Resource):
                 print("Rolling back")
             return tracker
         else:
-            return {"error": "Tracker not found"}, 404
+            raise NotFoundError( item = 'Tracker/User')
