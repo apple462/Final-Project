@@ -21,7 +21,10 @@ def tracker_log(tracker_id):
 
     elif request.method == "POST":
         when = request.form["when"]
-        value = request.form["value"]
+        if tracker.type == "Time Duration":
+            value = request.form["hours"] + ":" + request.form["minutes"]
+        else:
+            value = request.form["value"]
         note = request.form["note"]
         tracker_entry = Logs(timestamp=when, value=value, note=note, tracker=tracker.id)
         
@@ -44,12 +47,15 @@ def tracker_log_edit(tracker_id, log_id):
     if request.method == "GET":
         if tracker.type == "Multiple Choice":
             return render_template("tracker-log-edit.html", name = current_user.name, choices = tracker.settings.split(","), log = log)
-        else:
-            return render_template("tracker-log-edit.html", name = current_user.name, tracker_type = tracker.type, log = log)
+        elif tracker.type == "Time Duration":
+            return render_template("tracker-log-edit.html", name = current_user.name, tracker_type = tracker.type, log = log, hours = log.value.split(":")[0], minutes = log.value.split(":")[1])
         
     elif request.method == "POST":
         log.timestamp = request.form["when"]
-        log.value = request.form["value"]
+        if tracker.type == "Time Duration":
+            log.value = request.form["hours"] + ":" + request.form["minutes"]
+        else:
+            log.value = request.form["value"]
         log.note = request.form["note"]
         
         try:

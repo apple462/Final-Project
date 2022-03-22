@@ -9,12 +9,21 @@
         <input type="datetime-local" name="when" id="when" value="{{ log.timestamp }}" required />
     </div>
     <div>
+        {% if tracker_type == "Numerical" %}
         <label for="value">Value</label>
-        {% if tracker_type == "Numerical" or tracker_type == "Time Duration" %}
         <input type="number" name="value" id="value" value="{{ log.value }}" required />
         {% endif %}
 
+        {% if tracker_type == "Time Duration" %}
+        <label for="hours">Hours</label>
+        <input type="number" name="hours" id="hours" value="{{ hours }}" required step="1" min="0" />
+        <br>
+        <label for="minutes">Minutes</label>
+        <input type="number" name="minutes" id="minutes" value="{{ minutes }}" required step="1" min="0" max="59" />
+        {% endif %}
+
         {% if tracker_type == "Boolean" %}
+        <label for="value">Value</label>
         <select name="value" id="value" required>
             <option value="" disabled>Select value</option>
             <option value="true" {{"selected" if log.value == "true"}}>True</option>
@@ -23,6 +32,7 @@
         {% endif %}
 
         {% if choices %}
+        <label for="value">Value</label>
         <select name="value" id="value" required>
             <option value="" disabled>Select value</option>
             {% for choice in choices %}

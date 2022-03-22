@@ -3,6 +3,7 @@ from flask import current_app as app
 from .models import Profile
 from flask_login import LoginManager, login_required, login_user, current_user, logout_user
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import check_password_hash, generate_password_hash
 
 db = SQLAlchemy()
 
@@ -32,7 +33,7 @@ def login():
         if profile is None:
             flash('Invalid username')
             return render_template('login.html')
-        elif profile.password != password:
+        elif not check_password_hash(profile.password, password):
             flash('Invalid password')
             return render_template('login.html')
         else:
@@ -45,3 +46,27 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for("login"))
+
+
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "GET":
+        return render_template("signup.html")
+
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        confirm_password = request.form["confirm_password"]
+        if password != confirm_password:
+            flash("Passwords do not match")
+            return render_template("signup.html", username=username)
+        profile = Profile(name=username, password=generate_password_hash(password, method="sha256"))
+
+        db.session.add(profile)
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
+            print("Rolling back")
+        return redirect(url_for("login"))
