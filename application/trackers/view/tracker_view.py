@@ -1,7 +1,7 @@
 from flask import request
 from flask_restful import Resource, Api, fields, marshal_with
 from application.trackers.model.models import Tracker
-from app import db
+from main import db
 from .error import *
 
 Tracker_output = {

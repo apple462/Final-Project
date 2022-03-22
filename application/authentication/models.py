@@ -1,5 +1,5 @@
 from flask_login import UserMixin
-from app import db
+from main import db
 from application.trackers.model.models import Tracker 
 
 class Profile(UserMixin, db.Model):

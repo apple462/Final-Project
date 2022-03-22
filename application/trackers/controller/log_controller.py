@@ -2,7 +2,7 @@ from flask import current_app as app, redirect, url_for
 from flask import render_template, request
 from flask_login import login_required, current_user
 from application.trackers.model.models import Tracker, Logs
-from app import db
+from main import db
 import datetime
 
 

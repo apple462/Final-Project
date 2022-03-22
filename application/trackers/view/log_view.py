@@ -2,7 +2,7 @@ from tkinter.messagebox import NO
 from flask import request
 from flask_restful import Resource, Api, fields, marshal_with
 from application.trackers.model.models import Logs, Tracker
-from app import db
+from main import db
 from datetime import datetime, timedelta, date
 from .error import *
 
