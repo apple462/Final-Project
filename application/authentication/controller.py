@@ -57,9 +57,16 @@ def signup():
         username = request.form["username"]
         password = request.form["password"]
         confirm_password = request.form["confirm_password"]
+        
+        profile = Profile.query.filter_by(name=username).first()
+        if profile:
+            flash("Username already exists")
+            return render_template("signup.html")
+
         if password != confirm_password:
             flash("Passwords do not match")
             return render_template("signup.html", username=username)
+            
         profile = Profile(name=username, password=generate_password_hash(password, method="sha256"))
 
         db.session.add(profile)

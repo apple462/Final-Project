@@ -43,12 +43,15 @@ def tracker_log(tracker_id):
 def tracker_log_edit(tracker_id, log_id):
     tracker = Tracker.query.filter_by(id=tracker_id).first()
     log = Logs.query.filter_by(id=log_id).first()
-
+    # print(2)
     if request.method == "GET":
         if tracker.type == "Multiple Choice":
             return render_template("tracker-log-edit.html", name = current_user.name, choices = tracker.settings.split(","), log = log)
         elif tracker.type == "Time Duration":
+            # print(22)
             return render_template("tracker-log-edit.html", name = current_user.name, tracker_type = tracker.type, log = log, hours = log.value.split(":")[0], minutes = log.value.split(":")[1])
+        else:
+            return render_template("tracker-log-edit.html", name = current_user.name, tracker_type = tracker.type, log = log)
         
     elif request.method == "POST":
         log.timestamp = request.form["when"]
