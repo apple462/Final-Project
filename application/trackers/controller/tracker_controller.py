@@ -38,7 +38,7 @@ def tracker(tracker_id):
 
     elif request.method == "POST":
         period = request.form["period"]
-        print(period)
+        # print(period)
         logs = Logs.query.filter_by(tracker=tracker_id).all() 
         tracker = Tracker.query.filter_by(id=tracker_id).first()
         value = []
@@ -47,19 +47,32 @@ def tracker(tracker_id):
         for log in logs:
             date_str = log.timestamp[:10]
             date_time_obj = datetime.strptime(date_str, '%Y-%m-%d')
-            
+
+            if tracker.type == "Time Duration":
+                time_in_minutes = float(log.value.split(":")[0] + "." + log.value.split(":")[1])
+                print("time in minutes", time_in_minutes)
+
             if period == "0":
-                value.append(log.value)
+                if tracker.type == "Time Duration":
+                    value.append(time_in_minutes)
+                else:
+                    value.append(log.value)
                 timestamp.append(log.timestamp)
 
             elif period =="1":
                 if date_time_obj.date() == today:
-                    value.append(log.value)
+                    if tracker.type == "Time Duration":
+                        value.append(time_in_minutes)
+                    else:
+                        value.append(log.value)
                     timestamp.append(log.timestamp)
 
             else:
                 if date_time_obj.date() >= today - timedelta(days=int(period)):
-                    value.append(log.value)
+                    if tracker.type == "Time Duration":
+                        value.append(time_in_minutes)
+                    else:
+                        value.append(log.value)
                     timestamp.append(log.timestamp)
 
         create_graph(value, timestamp)
